@@ -59,7 +59,7 @@ class GroupResource extends Resource
                 ->placeholder('Seleccione el instructor de la ficha')
                     ->required()
                    
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -103,6 +103,7 @@ class GroupResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->label('Editar'),
                 Tables\Actions\DeleteAction::make()->label('Borrar'),
+                Tables\Actions\ViewAction::make()->label('Ver'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
