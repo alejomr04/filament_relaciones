@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\StudentResource\Pages;
+use App\Filament\Resources\StudentResource\RelationManagers;
+use App\Models\Student;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,34 +13,37 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class StudentResource extends Resource
 {
-    protected static ?string $model = User::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-    protected static ?string $label = 'Usuarios';
-    protected static ?int $navigationSort = 1;
-    
+    protected static ?string $model = Student::class;
     protected static ?string $navigationGroup = 'Sistema de gestión para administradores';
+    protected static ?string $label = 'Estudiantes';
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('name')->label('Nombre')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('document')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
+                Forms\Components\TextInput::make('lastname')->label('Apellido')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
+                Forms\Components\TextInput::make('document')->label('Documento')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('age')->label('Edad')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\Select::make('group_id')
+                    ->relationship(name: 'group', titleAttribute: 'name') // el title sirve para mostrar el campo de la bd
+                    ->label('Nombre grupo')
+                    ->placeholder('Seleccione el nombre del grupo')
+                    ->required()
             ]);
     }
 
@@ -48,15 +51,16 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('name')->label('Nombre')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('document')
+                Tables\Columns\TextColumn::make('lastname')->label('Apellido')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                Tables\Columns\TextColumn::make('document')->label('Documento')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('age')->label('Edad')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('group.name')->label('Grupo')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -91,9 +95,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListStudents::route('/'),
+            'create' => Pages\CreateStudent::route('/create'),
+            'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

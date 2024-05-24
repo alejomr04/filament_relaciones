@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Instructor\Resources;
 
-use App\Filament\Resources\GroupResource\Pages;
-use App\Filament\Resources\GroupResource\RelationManagers;
+use App\Filament\Instructor\Resources\GroupResource\Pages;
+use App\Filament\Instructor\Resources\GroupResource\RelationManagers;
 use App\Models\Group;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,9 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Model\User;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Auth;
 
 class GroupResource extends Resource
 {
@@ -22,69 +20,66 @@ class GroupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static ?string $label = 'Grupos';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Sistema de gestión para instructores';
 
-    protected static ?string $navigationGroup = 'Sistema de gestión para administradores';
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('user_id', Auth::user()->id);
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nombre de ficha')
-                    ->placeholder('Ingrese el nombre de la ficha')
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\TextInput::make('ficha')
                     ->label('Ficha')
-                    ->placeholder('Número de ficha')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('name')
+                    ->label('Nombre')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('amount')
-                ->label('Cantidad de estudiantes')
+                    ->label('Cantidad alumnos')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('location')
-                ->label('Ubicación de la sede')
+                    ->label('Ubicación')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('classroom')
-                ->label('Ambiente')
+                    ->label('Ambiente de formación')
                     ->required()
                     ->maxLength(255),
-
-                //Select en filament
-                Forms\Components\Select::make('user_id')
-                ->relationship(name: 'user', titleAttribute:'name') // el title sirve para mostrar el campo de la bd
-                ->label('Instructor')
-                ->placeholder('Seleccione el instructor de la ficha')
-                    ->required()
-                   
-            ])->columns(2);
+                // Forms\Components\TextInput::make('user_id')
+                //     ->required()
+                //     ->numeric(),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('ficha')
+                ->label('Ficha')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                 ->label('Nombre')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('ficha')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
-                ->label('Cantidad Aprendices')
+                    ->label('Cantidad alumnos')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('location')
-                ->label('Ubicacion')
+                    ->label('Ubicación')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('classroom')
-                ->label('Ambiente')
+                    ->label('Ambiente de formación')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                ->label('Instructor')
-                ->searchable(),
+                // Tables\Columns\TextColumn::make('user.name')
+                //     ->numeric()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -95,16 +90,11 @@ class GroupResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('name')
-                    ->options([
-                        'Felipe Londono' => 'Felipe londono',
-                        'admin' => 'admin',
-                        
-                    ])
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->label('Editar'),
-                Tables\Actions\DeleteAction::make()->label('Borrar'),
+                Tables\Actions\DeleteAction::make()->label('Eliminar'),
                 Tables\Actions\ViewAction::make()->label('Ver'),
             ])
             ->bulkActions([
