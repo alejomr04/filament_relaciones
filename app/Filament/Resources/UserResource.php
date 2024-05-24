@@ -6,9 +6,11 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,6 +43,12 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255),
+                FileUpload::make('image')
+                    ->label('Imagen')
+                    ->image() // Indica que se trata de una imagen
+                    ->imageEditor()
+                    ->directory('users') // Directorio donde se guardarán las imágenes
+                    ->visibility('public'), // Hacer las imágenes públicas
             ]);
     }
 
@@ -57,6 +65,15 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
+
+                ImageColumn::make('image')
+                    ->label('Imagen')
+                    ->visibility('public')
+                    ->width(50)
+                    
+                    ->square(), // Forma circular de la imagen
+
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
