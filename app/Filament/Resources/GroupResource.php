@@ -24,6 +24,9 @@ class GroupResource extends Resource
     protected static ?string $label = 'Grupos';
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $navigationGroup = 'Sistema de gestión para instructores';
+
+
     public static function form(Form $form): Form
     {
         return $form
