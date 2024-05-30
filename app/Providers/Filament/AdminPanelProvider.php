@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\AdminResource\Widgets\AdminChart;
+use App\Filament\Resources\AdminResource\Widgets\GroupStats;
+use App\Filament\Resources\AdminResource\Widgets\TotalChart;
+use App\Filament\Resources\AdminResource\Widgets\TotalTodayChart;
+use BarChartWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use LineChartWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -39,6 +45,11 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
+                GroupStats::class,
+                TotalChart::class,
+                TotalTodayChart::class,
+
+                
             ])
             ->middleware([
                 EncryptCookies::class,
