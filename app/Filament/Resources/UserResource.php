@@ -74,6 +74,15 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
+                
+                    Tables\Columns\TextColumn::make('roles.name')
+                    ->searchable()
+                    ->badge()
+                    ->icon('heroicon-o-user')
+                    ->color(fn (string $state): string => match ($state) {
+                        'super_admin' => 'success',
+                        default => 'gray',
+                    }),
 
                 ImageColumn::make('image')
                     ->label('Imagen')
