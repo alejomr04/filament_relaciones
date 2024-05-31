@@ -22,7 +22,7 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user';
     protected static ?string $label = 'Usuarios';
     protected static ?int $navigationSort = 1;
-    
+
     protected static ?string $navigationGroup = 'Sistema de gestión para administradores';
 
     public static function form(Form $form): Form
@@ -49,6 +49,15 @@ class UserResource extends Resource
                     ->imageEditor()
                     ->directory('users') // Directorio donde se guardarán las imágenes
                     ->visibility('public'), // Hacer las imágenes públicas
+
+                Forms\Components\Select::make('roles')
+                    ->relationship(name: 'roles', titleAttribute: 'name')
+                    ->label('Rol')
+                    ->placeholder('Seleccione un rol')
+                    ->multiple()
+                    ->preload()
+                    ->searchable()
+
             ]);
     }
 
@@ -70,7 +79,7 @@ class UserResource extends Resource
                     ->label('Imagen')
                     ->visibility('public')
                     ->width(50)
-                    
+
                     ->square(), // Forma circular de la imagen
 
 
